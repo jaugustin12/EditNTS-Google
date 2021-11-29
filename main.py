@@ -3,6 +3,8 @@
 
 from __future__ import print_function
 
+import nltk
+nltk.download('punkt')
 import argparse
 import collections
 import logging

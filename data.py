@@ -105,7 +105,7 @@ class Vocab():
         self.embedding = None
 
     def add_vocab_from_file(self, vocab_file="../vocab_data/vocab.txt",vocab_size=30000):
-        with open(vocab_file, "rb") as f:
+        with open(vocab_file, "r") as f:
             for i,line in enumerate(f):
                 if i >=vocab_size:
                     break

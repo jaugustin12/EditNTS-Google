@@ -8,6 +8,7 @@ import nltk
 import data
 nltk.data.path.append("/media/nvme/nltk_data")
 from label_edits import edit2sent
+import fkgl 
 
 
 def sort_by_lens(seq, seq_lengths):
@@ -126,4 +127,4 @@ class Evaluator():
         for phrase in sys_out:
             out_string += phrase
         print('out_string', out_string)
-        return np.mean(print_loss_tf), np.mean(bleu_list), np.mean(sari_list), sys_out, textstat.flesch_kincaid_grade(out_string)
+        return np.mean(print_loss_tf), np.mean(bleu_list), np.mean(sari_list), sys_out, fkgl.Readability(out_string).FleschKincaidGradeLevel()

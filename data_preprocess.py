@@ -10,6 +10,7 @@ import sys
 import time
 import nltk
 nltk.download('averaged_perceptron_tagger')
+from pathlib import Path
 
 
 # This script contains the reimplementation of the pre-process steps of the dataset
@@ -182,27 +183,72 @@ def editnet_data_to_editnetID(df,output_path):
     print('saved to %s'%output_path)
     return outdf
 
-
-
-comp_simp_ip = ["data/raw/NationalRad/MRI_ABDOMEN_WITH_CONTRAST.en", "data/raw/NationalRad/MRI_ABDOMEN_WITH_CONTRAST.en"]
-comp_simp_tgt = ["data/interim/MetaMap/MRI_ABDOMEN_WITH_CONTRAST.en", "data/interim/MetaMap/MRI_ABDOMEN_WITH_CONTRAST.en"]
-
-if __name__ == '__main__':
-    f = open("metamap_output.out", 'w')
+def useMetaMap(comp_simp_ip, comp_simp_tgt):
     start = time.time()
     p = Pool(100)
     for i in range(len(comp_simp_ip)):
         sentences = [l.strip() for l in open(comp_simp_ip[i], 'r').readlines()]
-        f.writelines('Document:'+ str(i) + '\n')
-        f.writelines([str(sent) + "\n" for sent in sentences])
         ops = get_metamap_op(sentences)
         ops = [str(sent) + "\n" for sent in ops]
         with open(comp_simp_tgt[i], 'w') as tgt_file:
             tgt_file.writelines(ops)
     end = time.time()
     print('METAMAP TOOK:', end - start)
-    comp_text = open(comp_simp_tgt[0], "r")
-    simp_text = open(comp_simp_tgt[1], "r")
-    f.close()
-    outdf = editnet_data_to_editnetID(process_raw_data(comp_text, simp_text),'data/interim/MetaMap/MRI_ABDOMEN_WITH_CONTRAST.pkl')
-    outdf.to_csv('data/interim/MRI_ABDOMEN_WITH_CONTRAST.csv')
+
+
+if __name__ == '__main__':
+    #initialization
+    typeOfReport = input("Is this a regular or radiology report: ")
+    folders = input("what are the names of the folders (separated by commas): ")
+    folders = folders.split(",")
+    comp_docs = input("What are the names of the complicated docs (separated by commas): ")
+    comp_docs = comp_docs.split(",")
+    for i in range(len(comp_docs)):
+        folder = folders[i] + "/"
+        comp_doc = comp_docs[i]
+        comp_path = "data/raw/" + folder 
+        files = os.listdir("data/raw/" + folder)
+        simp_docs = [f for f in files if f != comp_doc]
+        print('simp_docs', simp_docs)
+        print('comp_doc', comp_doc)
+        nameOfDocs = [Path("data/raw/" + folder + simp_docs[j]).stem + str(j) for j in range(len(simp_docs))]
+        print('nameOfDocs',nameOfDocs)
+
+        for i in range(len(simp_docs)):
+            simp_doc = simp_docs[i]
+            nameOfDoc = nameOfDocs[i]
+            metaMap = 'no-MetaMap/'
+            comp_simp_tgt = ["data/raw/" + folder + comp_doc, "data/raw/"+ folder + simp_doc]
+            if typeOfReport == "radiology": #check type of report (regular or radiology)
+                metaMap = "MetaMap/"
+                comp_simp_ip = ["data/raw/" + folder+ comp_doc, "data/raw/" + folder+ simp_doc]
+                comp_simp_tgt = ["data/interim/visual_output/" + metaMap + folder+ comp_doc, "data/interim/visual_output/" + metaMap +folder+ simp_doc]
+                path = 'data/interim/visual_output/'+metaMap + folder
+                isExist = os.path.exists(path)
+                if not isExist:
+                    os.makedirs(path)
+
+                useMetaMap(comp_simp_ip, comp_simp_tgt)
+
+            comp_text = open(comp_simp_tgt[0], "r")
+            simp_text = open(comp_simp_tgt[1], "r")
+            print('simp_text\n', simp_text, 'comp_text\n', comp_text)
+            if typeOfReport == "radiology":
+                path = 'data/interim/training-with-Metamap/' + folder
+                isExist = os.path.exists(path)
+                if not isExist:
+                    os.makedirs(path)
+                outdf = editnet_data_to_editnetID(process_raw_data(comp_text, simp_text),'data/interim/training-with-Metamap/' + folder+ nameOfDoc + '.pkl')
+            else:
+                path = 'data/interim/training/' + folder
+                isExist = os.path.exists(path)
+                if not isExist:
+                    os.makedirs(path)
+                outdf = editnet_data_to_editnetID(process_raw_data(comp_text, simp_text),'data/interim/training/' + folder+ nameOfDoc + '.pkl')
+            print('path',path)
+            path = 'data/interim/visual_output/'+metaMap + folder
+            isExist = os.path.exists(path)
+            if not isExist:
+                os.makedirs(path)
+
+            outdf.to_csv('data/interim/visual_output/' + metaMap + folder+ nameOfDoc + '.csv')
