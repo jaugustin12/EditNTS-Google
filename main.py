@@ -39,7 +39,7 @@ bleu_score_array= []
 sari_array= []
 flesch_kincaid_grade_array = []
 
-def create_plot(epochs, values, y_label, my_title):
+def create_plot(epochs, values, y_label, my_title, args):
     # Data for plotting
     t = np.array([i for i in range(epochs)])
     s = np.array(values)
@@ -47,7 +47,7 @@ def create_plot(epochs, values, y_label, my_title):
     ax.plot(t, s)
     ax.set(xlabel='Epochs', ylabel=y_label,title=my_title)
     ax.grid()
-    fig.savefig(my_title + str(epochs) +".png")
+    fig.savefig(args.store_dir + args.folder + my_title + str(epochs) +".png")
 
 def sort_by_lens(seq, seq_lengths):
     seq_lengths_sorted, sort_order = seq_lengths.sort(descending=True)
@@ -122,11 +122,11 @@ def training(edit_net,nepochs, args, vocab, print_every=2):
     for epoch in range(nepochs):
         # scheduler.step()
         #reload training for every epoch
-        if os.path.isfile(args.data_path+'training'):
-            print('is a file')
-            train_dataset = data.Dataset(args.data_path + 'training')
+        if os.path.isfile(args.data_path+'document-alignedv2.pkl'):
+            # print('is a file')
+            train_dataset = data.Dataset(args.data_path + 'document-alignedv2.pkl')
         else:  # iter chunks and vocab_data
-            print('is a folder')
+            # print('is a folder')
             train_dataset = data.Datachunk(args.data_path + 'training')
 
         array = []
@@ -135,9 +135,9 @@ def training(edit_net,nepochs, args, vocab, print_every=2):
         
         check_every = max(array)/2
         max_index = len(array)-1
-        print('check_every', check_every, 'max_index', max_index)
+        # print('check_every', check_every, 'max_index', max_index)
 
-        train_dataset = data.Datachunk(args.data_path + 'training')
+        train_dataset = data.Dataset(args.data_path + 'document-alignedv2.pkl')
 
 
         for i, batch_df in train_dataset.batch_generator(batch_size=args.batch_size, shuffle=True):
@@ -200,32 +200,49 @@ def training(edit_net,nepochs, args, vocab, print_every=2):
             if (i == max_index):
                 val_loss, bleu_score, sari, sys_out, flesch_kincaid_grade = evaluator.evaluate(eval_dataset, vocab, edit_net,args)
                 edit_net.eval()
+                path = args.store_dir + args.folder
+                isExist = os.path.exists(path)
+                if not isExist:
+                    os.makedirs(path)
+                f = open(args.store_dir + args.folder +  "values.txt" , "w")
+
                 log_msg = "epoch %d, step %d, Dev loss: %.4f, Bleu score: %.4f, Sari: %.4f, flesch_kincaid_grade: %.4f, \n" % (epoch, i, val_loss, bleu_score, sari, flesch_kincaid_grade)
-                print(log_msg)
 
-                print('val_loss_array:', val_loss_array)
-                print('bleu_score_array:', bleu_score_array)
-                print('sari_array:', sari_array)
-                print('flesch_kincaid_grade_array:', flesch_kincaid_grade_array)
+                f.write(log_msg)
 
-                with open(args.store_dir + 'all-newsela', 'w') as tgt_file:
+
+
+                f.write('val_loss_array:'+ str(val_loss_array)  +'\n')
+
+                f.write('bleu_score_array:'+ str(bleu_score_array) +'\n')
+
+                f.write('sari_array:'+ str(sari_array) +'\n')
+
+                f.write('flesch_kincaid_grade_array:'+ str(flesch_kincaid_grade_array) + '\n' )
+
+                f.close()
+                path = args.store_dir + args.folder+ 'output/'
+                isExist = os.path.exists(path)
+                if not isExist:
+                    os.makedirs(path)
+                with open(args.store_dir + args.folder+ 'output/'+  'sentence-aligned-newsela' + str(epoch), 'w') as tgt_file:
                     tgt_file.writelines(sys_out)
 
                 if val_loss < best_eval_loss:
                     best_eval_loss = val_loss
-                Checkpoint(model=edit_net,
-                           opt=editnet_optimizer,
-                           epoch=epoch, step=i,
-                           ).save(args.store_dir)
+                # Checkpoint(model=edit_net,
+                #            opt=editnet_optimizer,
+                #            epoch=epoch, step=i,
+                #            ).save(args.store_dir)
                 print("checked after %d steps"%i)
 
                 edit_net.train()
-                if epoch % 50 == 0 and epoch != 0:
+                if epoch % 10 == 0 and epoch != 0:
                     print("After", str(epoch), "epochs")
-                    create_plot(epoch, val_loss_array,'Val Loss', 'val_loss')
-                    create_plot(epoch, bleu_score_array, 'Bleu Score', 'bleu_score')
-                    create_plot(epoch, sari_array, 'Sari Score','sari')
-                    create_plot(epoch, flesch_kincaid_grade_array, 'Flesch Kincaid Grade','flesch_kincaid_grade_array')
+                    create_plot(epoch, val_loss_array,'Val Loss', 'val_loss', args)
+                    create_plot(epoch, bleu_score_array, 'Bleu Score', 'bleu_score', args)
+                    create_plot(epoch, sari_array, 'Sari Score','sari', args)
+                    create_plot(epoch, flesch_kincaid_grade_array, 'Flesch Kincaid Grade','flesch_kincaid_grade_array', args)
         # log_msg = "epoch %d, step %d, Dev loss: %.4f, Bleu score: %.4f, Sari: %.4f \n" % (epoch, i, val_loss, bleu_score, sari)
                 val_loss_array.append(val_loss)
                 bleu_score_array.append(bleu_score)
@@ -240,6 +257,9 @@ def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [INFO] %(message)s')
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--folder', type=str,dest='folder',
+                    default='newsela-sentence-aligned/',
+                    help='output folder')
     parser.add_argument('--data_path', type=str,dest='data_path',
                         default='data/interim/',
                         help='Path to train vocab_data')
@@ -287,7 +307,7 @@ def main():
     )
     hps = hyperparams(
         vocab_size=vocab.count,
-        embedding_dim=100,
+        embedding_dim=200,
         word_hidden_units=args.hidden,
         sent_hidden_units=args.hidden,
         pretrained_embedding=vocab.embedding,
@@ -309,9 +329,9 @@ def main():
         edit_net.cuda()
         edit_net.train()
 
-    filename = 'data/models/all-newsela.sav'
+    filename = 'data/models/sentence-aligned-newsela.pkl.sav'
     my_edit_net = training(edit_net, args.epochs, args, vocab)
-    # pickle.dump(my_edit_net, open(filename, 'wb'))
+    pickle.dump(my_edit_net, open(filename, 'wb'))
     # loaded_model = pickle.load(open(filename, 'rb'))
 
 

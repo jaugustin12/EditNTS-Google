@@ -35,7 +35,7 @@ def unsort(x_sorted, sorted_order):
     return x_unsort
 
 class EncoderRNN(nn.Module):
-    def __init__(self, vocab_size, embedding_dim, pos_vocab_size, pos_embedding_dim,hidden_size, n_layers=1, embedding=None, embeddingPOS=None,dropout=0.3):
+    def __init__(self, vocab_size, embedding_dim, pos_vocab_size, pos_embedding_dim,hidden_size, n_layers=3, embedding=None, embeddingPOS=None,dropout=0.3):
         super(EncoderRNN, self).__init__()
         self.n_layers = n_layers
         self.hidden_size = hidden_size
@@ -87,7 +87,7 @@ class EncoderRNN(nn.Module):
 
 
 class EditDecoderRNN(nn.Module):
-    def __init__(self, vocab_size, embedding_dim, hidden_size, n_layers=1, embedding=None):
+    def __init__(self, vocab_size, embedding_dim, hidden_size, n_layers=3, embedding=None):
         super(EditDecoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.embedding_dim = embedding_dim
@@ -396,7 +396,7 @@ class EditDecoderRNN(nn.Module):
 
 
 class EditNTS(nn.Module):
-    def __init__(self, config, n_layers=2):
+    def __init__(self, config, n_layers=3):
         super(EditNTS, self).__init__()
         self.embedding = nn.Embedding(config.vocab_size, config.embedding_dim)
         if not(config.pretrained_embedding is None):

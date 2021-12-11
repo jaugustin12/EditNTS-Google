@@ -183,16 +183,28 @@ def editnet_data_to_editnetID(df,output_path):
     print('saved to %s'%output_path)
     return outdf
 
-def useMetaMap(comp_simp_ip, comp_simp_tgt):
-    start = time.time()
-    p = Pool(100)
-    for i in range(len(comp_simp_ip)):
-        sentences = [l.strip() for l in open(comp_simp_ip[i], 'r').readlines()]
+def useMetaMap(comp_simp_ip, comp_simp_tgt, typeOfReport):
+    if typeOfReport == "radiology":
+        start = time.time()
+        p = Pool(100)
+        sentences = [l.strip() for l in open(comp_simp_ip[0], 'r').readlines()]
         ops = get_metamap_op(sentences)
         ops = [str(sent) + "\n" for sent in ops]
-        with open(comp_simp_tgt[i], 'w') as tgt_file:
+        with open(comp_simp_tgt[0], 'w') as tgt_file:
             tgt_file.writelines(ops)
-    end = time.time()
+        with open(comp_simp_tgt[1], 'w') as tgt_file:
+            tgt_file.writelines(ops)
+        end = time.time()
+    else:
+        start = time.time()
+        p = Pool(100)
+        for i in range(len(comp_simp_ip)):
+            sentences = [l.strip() for l in open(comp_simp_ip[i], 'r').readlines()]
+            ops = get_metamap_op(sentences)
+            ops = [str(sent) + "\n" for sent in ops]
+            with open(comp_simp_tgt[i], 'w') as tgt_file:
+                tgt_file.writelines(ops)
+        end = time.time()
     print('METAMAP TOOK:', end - start)
 
 
@@ -228,7 +240,7 @@ if __name__ == '__main__':
                 if not isExist:
                     os.makedirs(path)
 
-                useMetaMap(comp_simp_ip, comp_simp_tgt)
+                useMetaMap(comp_simp_ip, comp_simp_tgt, typeOfReport)
 
             comp_text = open(comp_simp_tgt[0], "r")
             simp_text = open(comp_simp_tgt[1], "r")

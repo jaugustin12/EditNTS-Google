@@ -125,6 +125,5 @@ class Evaluator():
         print('loss_with_teacher_forcing', np.mean(print_loss_tf))
         out_string = ""
         for phrase in sys_out:
-            out_string += phrase
-        print('out_string', out_string)
-        return np.mean(print_loss_tf), np.mean(bleu_list), np.mean(sari_list), sys_out, fkgl.Readability(out_string).FleschKincaidGradeLevel()
+            out_string += phrase + '\n'
+        return np.mean(print_loss_tf), np.mean(bleu_list), np.mean(sari_list), out_string, fkgl.Readability(out_string).FleschKincaidGradeLevel()

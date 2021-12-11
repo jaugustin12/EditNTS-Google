@@ -1,0 +1,36 @@
+The patient has a history of cancer of the pancreas. The pancreas is an organ in the upper part of the abdomen which helps in food digestion and regulation of blood sugar.
+The patient has had chemotherapy of the aorta (a large blood vessel in the abdomen) and a Whipple procedure (a surgery which removes part of the pancreas and connects it back to the gut) on DATE.
+The patient has a history of chronic lower back pain.
+This study was performed because the patient complains of abdominal pain. 
+This is a follow-up examination.
+This study was compared with CT scans done in the past on DATE and DATE.
+15 mL of MultiHance contrast was given in the vein. This was done to better see the structures inside the body. Different types of computer reconstructions were used to produce the images read by the radiologist(s).
+The right kidney was very swollen with fluid backup. The right ureter (the tube that connects the kidney to the bladder and allows for urine to move) was also swollen with fluid.
+There was an area of less brightness in the right ureter which may be only because of the flow of the urine at that point.
+There also may be splitting of the inside of the right ureter closer to the bladder.
+It is recommended that the patient have a CT scan of the abdomen and pelvis with and without contrast administration in the vein to assess if there is a stone or other process blocking the ureter.
+The right kidney is less active than the left kidney during one part of the study, which may be a sign of the kidney not working as well as it should.
+There is enlargement of the pelvis (a part of the kidney) of the left kidney that is the same as was seen beforehand.
+There was no growth or tumor found in the kidneys.
+There was no growth or tumor seen in the right ureter.
+There are changes in the pancreas and gallbladder that are because of the Whipple procedure.
+The tube inside of the pancreas is swollen.
+There are no masses that returned in the pancreas or the place where it was attached to the gut.
+In the left side of the liver, there are some swollen bile tubes.
+There is no blockage inside the main bile tube.
+The spleen and adrenal glands appear normal.
+There is no extra fluid in the abdomen, and there are no swollen lymph nodes seen.
+There is no blockage of the bowel seen.
+There is a hernia where part of the bowel sticks out of the front wall of the abdomen which is seen again on this image. There is no dangerous tightening of the bowel in the hernia.
+There is curvature of the spine in an S-shape.
+There are no bone lesions that could come from cancer in the abdomen.
+The swelling of the right kidney and ureter are worse than in the last image, meaning it has gotten worse.
+There is no stone or tumor in the parts of the right ureter that can be seen on this examination.
+It is recommended that the patient have a CT scan of the abdomen and pelvis with and without contrast administration in the vein to better assess the situation.
+There is enlargement of the pelvis (a part of the kidney) of the left kidney that is the same as was seen beforehand.
+There are changes in the abdomen that are because of the Whipple procedure.
+There are no masses that returned in the pancreas or the place where it was attached to the gut.
+In the left side of the liver, there are some swollen bile tubes.
+There is no extra fluid in the abdomen, and there are no swollen lymph nodes seen.
+There is a hernia where part of the bowel sticks out of the front wall of the abdomen which is seen again on this image. There is no dangerous tightening of the bowel in the hernia.
+There is curvature of the spine in an S-shape.

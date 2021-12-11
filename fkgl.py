@@ -1,5 +1,7 @@
 import math
 from nltk.tokenize import RegexpTokenizer
+import nltk
+nltk.download('punkt')
 from importlib import reload
 from mteval_bleu import MtEval_BLEU
 import sys
